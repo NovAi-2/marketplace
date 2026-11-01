@@ -1,0 +1,47 @@
+diff --git a/src/main/java/marketplace/TotalPriceVisitor.java b/src/main/java/marketplace/TotalPriceVisitor.java
+new file mode 100644
+index 0000000..0f4d8d2
+--- /dev/null
++++ b/src/main/java/marketplace/TotalPriceVisitor.java
+@@ -0,0 +1,22 @@
++package marketplace;
++
++/** Total price of a subtree. Added later: no element class was changed. */
++public class TotalPriceVisitor implements Visitor<Double> {
++    @Override
++    public Double visitCatalog(Catalog c) { return c.categories().stream().mapToDouble(x -> x.accept(this)).sum(); }
++
++    @Override
++    public Double visitCategory(Category c) { return c.products().stream().mapToDouble(p -> p.accept(this)).sum(); }
++
++    @Override
++    public Double visitPhysical(PhysicalProduct p) { return p.price(); }
++
++    @Override
++    public Double visitDigital(DigitalProduct p) { return p.price(); }
++
++    @Override
++    public Double visitService(ServiceProduct p) { return p.price(); }
++
++    @Override
++    public Double visitSubscription(Subscription p) { return p.price(); }
++}
+diff --git a/src/test/java/marketplace/TotalPriceVisitorTest.java b/src/test/java/marketplace/TotalPriceVisitorTest.java
+new file mode 100644
+index 0000000..092139e
+--- /dev/null
++++ b/src/test/java/marketplace/TotalPriceVisitorTest.java
+@@ -0,0 +1,13 @@
++package marketplace;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++
++import org.junit.jupiter.api.Test;
++
++class TotalPriceVisitorTest {
++    @Test
++    void totalPriceOfCatalog() {
++        // 1000 + 500 + 60 + 10 + 80
++        assertEquals(1650.0, new Marketplace(4).catalog.accept(new TotalPriceVisitor()), 1e-9);
++    }
++}

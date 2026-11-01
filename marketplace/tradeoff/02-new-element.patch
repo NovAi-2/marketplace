@@ -1,0 +1,89 @@
+diff --git a/src/main/java/marketplace/FilterVisitor.java b/src/main/java/marketplace/FilterVisitor.java
+index 52eecd0..c5bbf96 100644
+--- a/src/main/java/marketplace/FilterVisitor.java
++++ b/src/main/java/marketplace/FilterVisitor.java
+@@ -30,4 +30,7 @@ public class FilterVisitor implements Visitor<List<Product>> {
+ 
+     @Override
+     public List<Product> visitSubscription(Subscription p) { return check(p); }
++
++    @Override
++    public List<Product> visitGiftCard(GiftCard p) { return check(p); }
+ }
+diff --git a/src/main/java/marketplace/GiftCard.java b/src/main/java/marketplace/GiftCard.java
+new file mode 100644
+index 0000000..3b3cc40
+--- /dev/null
++++ b/src/main/java/marketplace/GiftCard.java
+@@ -0,0 +1,12 @@
++package marketplace;
++
++public class GiftCard extends Product {
++    public GiftCard(String id, String name, double price) {
++        super(id, name, price);
++    }
++
++    @Override
++    public <R> R accept(Visitor<R> visitor) {
++        return visitor.visitGiftCard(this);
++    }
++}
+diff --git a/src/main/java/marketplace/ShippingCostVisitor.java b/src/main/java/marketplace/ShippingCostVisitor.java
+index f8a0912..9eecc00 100644
+--- a/src/main/java/marketplace/ShippingCostVisitor.java
++++ b/src/main/java/marketplace/ShippingCostVisitor.java
+@@ -24,4 +24,7 @@ public class ShippingCostVisitor implements Visitor<Void> {
+ 
+     @Override
+     public Void visitSubscription(Subscription p) { return null; }
++
++    @Override
++    public Void visitGiftCard(GiftCard p) { return null; }
+ }
+diff --git a/src/main/java/marketplace/TaxVisitor.java b/src/main/java/marketplace/TaxVisitor.java
+index ff2e608..33fc706 100644
+--- a/src/main/java/marketplace/TaxVisitor.java
++++ b/src/main/java/marketplace/TaxVisitor.java
+@@ -19,4 +19,7 @@ public class TaxVisitor implements Visitor<Double> {
+ 
+     @Override
+     public Double visitSubscription(Subscription p) { return p.price() * 0.10; }
++
++    @Override
++    public Double visitGiftCard(GiftCard p) { return 0.0; }
+ }
+diff --git a/src/main/java/marketplace/TotalPriceVisitor.java b/src/main/java/marketplace/TotalPriceVisitor.java
+index 0f4d8d2..2fcf8b7 100644
+--- a/src/main/java/marketplace/TotalPriceVisitor.java
++++ b/src/main/java/marketplace/TotalPriceVisitor.java
+@@ -19,4 +19,7 @@ public class TotalPriceVisitor implements Visitor<Double> {
+ 
+     @Override
+     public Double visitSubscription(Subscription p) { return p.price(); }
++
++    @Override
++    public Double visitGiftCard(GiftCard p) { return p.price(); }
+ }
+diff --git a/src/main/java/marketplace/Visitor.java b/src/main/java/marketplace/Visitor.java
+index e20a800..d01dcdf 100644
+--- a/src/main/java/marketplace/Visitor.java
++++ b/src/main/java/marketplace/Visitor.java
+@@ -12,4 +12,6 @@ public interface Visitor<R> {
+     R visitService(ServiceProduct product);
+ 
+     R visitSubscription(Subscription product);
++
++    R visitGiftCard(GiftCard product);
+ }
+diff --git a/src/main/java/marketplace/XmlExportVisitor.java b/src/main/java/marketplace/XmlExportVisitor.java
+index a797e90..874eced 100644
+--- a/src/main/java/marketplace/XmlExportVisitor.java
++++ b/src/main/java/marketplace/XmlExportVisitor.java
+@@ -30,4 +30,7 @@ public class XmlExportVisitor implements Visitor<String> {
+ 
+     @Override
+     public String visitSubscription(Subscription p) { return leaf("subscription", p); }
++
++    @Override
++    public String visitGiftCard(GiftCard p) { return leaf("giftcard", p); }
+ }
